@@ -39,6 +39,8 @@ for j in range(0, 10):
     p_types[0] = player.p_type
     r_cards[1] = c_player.send_card()
     p_types[1] = c_player.p_type
+    #Передача второму PC игроку информации о лежащих наверху картах
+    c_player2.get_cards_info(table.get_card_nums())
     r_cards[2] = c_player2.send_card()
     p_types[2] = c_player2.p_type
     #Отображение кто чем походил

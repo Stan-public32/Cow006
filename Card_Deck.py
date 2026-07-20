@@ -44,7 +44,7 @@ self.id - Краткий идентификатор карты
 '''
 class Deck:
     """
-    Конструктор класса - создание колоды из 52 карт. По одной каждого вида (4 масти, 13 видов) итого 52 карты.
+    Конструктор класса - создание колоды из 104 карт.
     """
     def __init__(self):
         self.max = 104
@@ -131,7 +131,7 @@ class Player:
     '''
     def send_card(self):
         while True:
-            a = input("\nВыберите карту для хода (в строке Карты игрока XX (Y) XX-номер карты, Y-количество очков):")
+            a = input("\nВыберите номер карты для хода (в строке Карты игрока XX(Y): XX-номер карты, Y-количество очков):")
             num_cards = len(self.cards)
             flag = False
             out = -1
@@ -188,6 +188,7 @@ class C_player:
         self.cards = []
         self.points = 0
         self.p_type = "PC"
+        self.cards_on_table = [0]*4
     '''
     Функция сортировки карт компьютерного игрока.
     '''
@@ -216,6 +217,13 @@ class C_player:
         if card.id != -1:
             self.cards.append(card)
     '''
+    Функция получения компьютерным игроком карты. Инициируется основной программой, на вход передается карта, полученная из колоды. 
+    Пересчитываются внутренние атрибуты.
+    '''
+    def get_cards_info(self,cards_on_top):
+        for i in range(0,4):
+            self.cards_on_table[i] = cards_on_top[i]
+    '''
     Функция получения компьютерным игроком карты в отбой. Инициируется основной программой, на вход передается карта, полученна со стола. 
     Пересчитываются внутренние атрибуты.
     '''
@@ -229,13 +237,40 @@ class C_player:
     '''
     def send_card(self):
         got_cards = len(self.cards)
-        while True:
-            card_index = randint(0,got_cards-1)
-            if self.cards[card_index].counts == False:
-                break
-        self.cards[card_index].counts = False
-        card = self.cards[card_index]
-        self.cards.pop(card_index)
+        if self.p_type == "PC1":
+            while True:
+                card_index = randint(0,got_cards-1)
+                if self.cards[card_index].counts == False:
+                    break
+            self.cards[card_index].counts = False
+            card = self.cards[card_index]
+            self.cards.pop(card_index)
+        else:
+            crit = [[0 for _ in range(got_cards)] for _ in range(4)]
+            for k in range(0,4):
+                for i in range(0,got_cards):
+                    if self.cards[i].counts == True:
+                        crit[k][i] = -1000
+                    else:
+                        crit[k][i] = self.cards[i].id - self.cards_on_table[k]
+            mini = 1000
+            temp_i = 0
+            for k in range(0,4):
+                for i in range(0,got_cards):
+                    if crit[k][i] > 0 and mini > crit[k][i]:
+                        mini = crit[k][i]
+                        temp_i = i
+            if mini != 1000:
+                card = self.cards[temp_i]
+                self.cards.pop(temp_i)
+            else:
+                while True:
+                    card_index = randint(0,got_cards-1)
+                    if self.cards[card_index].counts == False:
+                        break
+                self.cards[card_index].counts = False
+                card = self.cards[card_index]
+                self.cards.pop(card_index)
         return card
     '''
     Функция подсчета очков.
@@ -362,6 +397,20 @@ class Table:
                 else:
                     b = 4
             return b
+    """
+    Функция получения номеров 4-х карт со стола
+    """
+    def get_card_nums(self):
+        cards_on_top = [0]*4
+        step_len = len(self.a_cards)
+        cards_on_top[0] = self.a_cards[step_len-1].id
+        step_len = len(self.b_cards)
+        cards_on_top[1] = self.b_cards[step_len-1].id
+        step_len = len(self.c_cards)
+        cards_on_top[2] = self.c_cards[step_len-1].id
+        step_len = len(self.d_cards)
+        cards_on_top[3] = self.d_cards[step_len-1].id
+        return cards_on_top
     """
     Функция передачи карты из стопки d_num в отбой игрока. Возвращает тип данных - Card - нулевая карта стопки.
     """
