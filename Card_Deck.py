@@ -131,7 +131,7 @@ class Player:
     '''
     def send_card(self):
         while True:
-            a = input("\nВыберите карту для хода (например, если хотите пойти картой 13(1) - введите число 13):")
+            a = input("\nВыберите карту для хода (в строке Карты игрока XX (Y) XX-номер карты, Y-количество очков):")
             num_cards = len(self.cards)
             flag = False
             out = -1
@@ -260,12 +260,11 @@ class C_player:
     '''
     def __str__(self):
         points = self.count_points()
-        str_out = f"\n\n\nОчков набрал компьютер: {points}\nКарты компьютера:  "
+        str_out = f"\nОчков набрал {self.p_type}: {points}\nКарты компьютера:  "
         if len(self.cards) > 0:
             for card in self.cards:
                 if card.counts == False:
                     str_out = str_out + f"##(#)  " #Для отображения карт компа, заменить на {card.short_name}
-        str_out = str_out + "\n"
         return str_out
 '''
 Класс Игровой стол. Содержит 4 стопки карт, растущих до 6 карт и сбрасывающих 5 карт в таком случае игроку, положившему 6 карту.
@@ -313,7 +312,7 @@ class Table:
                         break
                     else:
                         print("\nНеобходимо выбрать одну из четырех стопок. Введите число от 1 до 4.\nпопробуйте еще раз.\n")
-            if p_type == "PC":
+            if p_type == "PC1" or p_type == "PC2":
                 a = self.min_points_num()
             if a == "1":
                 self.a_cards.append(card)
@@ -435,7 +434,7 @@ class Table:
         b_len = len(self.b_cards)
         c_len = len(self.c_cards)
         d_len = len(self.d_cards)
-        outstr = "\n1:  "
+        outstr = "\n\n1:  "
         for i in range(0,a_len):
             outstr += self.a_cards[i].short_name + " "
             t = 3 - len(self.a_cards[i].number)
