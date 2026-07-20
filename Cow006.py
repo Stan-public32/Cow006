@@ -41,6 +41,8 @@ for j in range(0, 10):
     p_types[1] = c_player.p_type
     #Передача второму PC игроку информации о лежащих наверху картах
     c_player2.get_cards_info(table.get_card_nums())
+    #Передача второму PC игроку информации о номерах в стопках карт стола
+    c_player2.get_cards_nums_info(table.get_card_nums_seq())
     r_cards[2] = c_player2.send_card()
     p_types[2] = c_player2.p_type
     #Отображение кто чем походил

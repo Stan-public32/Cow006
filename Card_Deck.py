@@ -189,6 +189,7 @@ class C_player:
         self.points = 0
         self.p_type = "PC"
         self.cards_on_table = [0]*4
+        self.cards_nums_on_table = [0]*4
     '''
     Функция сортировки карт компьютерного игрока.
     '''
@@ -217,12 +218,17 @@ class C_player:
         if card.id != -1:
             self.cards.append(card)
     '''
-    Функция получения компьютерным игроком карты. Инициируется основной программой, на вход передается карта, полученная из колоды. 
-    Пересчитываются внутренние атрибуты.
+    Функция получения компьютерным игроком старших номеров карт стопок на столе.
     '''
     def get_cards_info(self,cards_on_top):
         for i in range(0,4):
             self.cards_on_table[i] = cards_on_top[i]
+    '''
+    Функция получения компьютерным игроком номеров в стопках старших карт стопок на столе.
+    '''
+    def get_cards_nums_info(self,cards_nums_on_top):
+        for i in range(0,4):
+            self.cards_nums_on_table[i] = cards_nums_on_top[i]
     '''
     Функция получения компьютерным игроком карты в отбой. Инициируется основной программой, на вход передается карта, полученна со стола. 
     Пересчитываются внутренние атрибуты.
@@ -255,12 +261,14 @@ class C_player:
                         crit[k][i] = self.cards[i].id - self.cards_on_table[k]
             mini = 1000
             temp_i = 0
+            temp_k = 0
             for k in range(0,4):
                 for i in range(0,got_cards):
                     if crit[k][i] > 0 and mini > crit[k][i]:
                         mini = crit[k][i]
                         temp_i = i
-            if mini != 1000:
+                        temp_k = k
+            if mini != 1000 and self.cards_nums_on_table[temp_k] < 5:
                 card = self.cards[temp_i]
                 self.cards.pop(temp_i)
             else:
@@ -411,6 +419,16 @@ class Table:
         step_len = len(self.d_cards)
         cards_on_top[3] = self.d_cards[step_len-1].id
         return cards_on_top
+    """
+    Функция получения номеров в стопке для этих 4-х карт со стола
+    """
+    def get_card_nums_seq(self):
+        cards_nums_on_top = [0]*4
+        cards_nums_on_top[0] = len(self.a_cards)
+        cards_nums_on_top[1] = len(self.b_cards)
+        cards_nums_on_top[2] = len(self.c_cards)
+        cards_nums_on_top[3] = len(self.d_cards)
+        return cards_nums_on_top
     """
     Функция передачи карты из стопки d_num в отбой игрока. Возвращает тип данных - Card - нулевая карта стопки.
     """
